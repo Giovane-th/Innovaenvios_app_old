@@ -1,32 +1,46 @@
-import axios from "axios";
+import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
-export const api = axios.create({ baseURL: API });
+const api = axios.create({ baseURL: API });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("innova_access_token");
+  const token = localStorage.getItem('inn_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401 && !error.config?.url?.startsWith("/auth/")) {
-      localStorage.removeItem("innova_access_token");
-      localStorage.removeItem("innova_user");
-      window.location.assign("/login");
+  (r) => r,
+  (err) => {
+    if (err?.response?.status === 401) {
+      localStorage.removeItem('inn_token');
+      localStorage.removeItem('inn_user');
     }
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
 
-export const brl = (v) =>
-  (v ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+// Auth
+export const register = (data) => api.post('/auth/register', data).then((r) => r.data);
+export const login = (data) => api.post('/auth/login', data).then((r) => r.data);
+export const me = () => api.get('/auth/me').then((r) => r.data);
 
-export const maskCep = (v) => {
-  const d = (v || "").replace(/\D/g, "").slice(0, 8);
-  return d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d;
-};
+// Frete
+export const calcularFrete = (payload) => api.post('/frete/calcular', payload).then((r) => r.data);
+
+// Envios
+export const criarEnvio = (payload) => api.post('/envios', payload).then((r) => r.data);
+export const listarEnvios = () => api.get('/envios').then((r) => r.data);
+export const enviosStats = () => api.get('/envios/stats').then((r) => r.data);
+
+// Wallet
+export const walletSaldo = () => api.get('/wallet/saldo').then((r) => r.data);
+export const walletRecarga = (valor, metodo = 'pix') => api.post('/wallet/recarga', { valor, metodo }).then((r) => r.data);
+export const walletExtrato = () => api.get('/wallet/extrato').then((r) => r.data);
+
+// Rastreio
+export const rastrear = (codigo) => api.get(`/rastreio/${codigo}`).then((r) => r.data);
+
+export default api;

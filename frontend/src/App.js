@@ -1,50 +1,34 @@
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner";
-import { SettingsProvider } from "@/context/SettingsContext";
-import { AuthProvider } from "@/context/AuthContext";
-import { Layout } from "@/components/Layout";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import Dashboard from "@/pages/Dashboard";
-import Frete from "@/pages/Frete";
-import Rastreamento from "@/pages/Rastreamento";
-import PrePostagem from "@/pages/PrePostagem";
-import ListaPostagens from "@/pages/ListaPostagens";
-import Contrato from "@/pages/Contrato";
-import Login from "@/pages/Login";
-import Cadastro from "@/pages/Cadastro";
-import Aguardando from "@/pages/Aguardando";
-import Usuarios from "@/pages/Usuarios";
-import Contatos from "@/pages/Contatos";
+import React from 'react';
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import CalculatorPage from './pages/CalculatorPage';
+import DashboardPage from './pages/DashboardPage';
+import WalletPage from './pages/WalletPage';
+import ShipmentsPage from './pages/ShipmentsPage';
+import { Toaster } from './components/ui/toaster';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Toaster position="top-right" richColors closeButton />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/cadastro" element={<Cadastro />} />
-          <Route element={<ProtectedRoute allowPending />}>
-            <Route path="/aguardando" element={<Aguardando />} />
-          </Route>
-          <Route element={<ProtectedRoute />}>
-            <Route element={<SettingsProvider><Layout /></SettingsProvider>}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/frete" element={<Frete />} />
-              <Route path="/rastreamento" element={<Rastreamento />} />
-              <Route path="/pre-postagem" element={<PrePostagem />} />
-              <Route path="/postagens" element={<ListaPostagens />} />
-              <Route path="/contatos" element={<Contatos />} />
-              <Route element={<ProtectedRoute admin />}>
-                <Route path="/contrato" element={<Contrato />} />
-                <Route path="/usuarios" element={<Usuarios />} />
-              </Route>
-            </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <div className="App">
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/cadastro" element={<RegisterPage />} />
+            <Route path="/calcular" element={<CalculatorPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/carteira" element={<WalletPage />} />
+            <Route path="/envios" element={<ShipmentsPage />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+      <Toaster />
+    </div>
   );
 }
 
